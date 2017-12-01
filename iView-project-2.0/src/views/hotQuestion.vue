@@ -90,7 +90,7 @@
 	export default {
 			created: function () {
 		    this.$http({
-	            url: 'host/qa/misdetail',
+	            url: `http://192.168.1.6:8888/DeltaRobot/statistics/hot.action?currentPage=${this.currentPage}&perPageCount=8`,
 	            method: 'POST',
 	            // 请求体发送的数据
 	            data: {
@@ -108,7 +108,7 @@
 		    			'question': res.body.questions[i].question,
 		    			'count': res.body.questions[i].count
 		    		})
-		    		this.pageCount = res.body.pageCount;
+		    		this.pageCount = res.body.pageCount * 8;
 		    	}
 		    }, (err) => {
 		      console.log(err);
@@ -144,7 +144,7 @@
       data () {
         return {
         	currentPage: 1,
-        	pageCount:100,
+        	pageCount:8,
           columns1: [
             {
                 title: '标签',
@@ -160,54 +160,54 @@
             }
 	        ],
 	        tableData: [
-	            {
-	                labelName: 'John Brown',
-	                age: 18,
-	                question: 'New York No. 1 Lake Park',
-	                count: '2016-10-03'
-	            },
-	            {
-	                labelName: 'Jim Green',
-	                age: 24,
-	                question: 'London No. 1 Lake Park',
-	                count: '2016-10-01'
-	            },
-	            {
-	                labelName: 'Joe Black',
-	                age: 30,
-	                question: 'Sydney No. 1 Lake Park',
-	                count: '2016-10-02'
-	            },
-	            {
-	                labelName: 'Jon Snow',
-	                age: 26,
-	                question: 'Ottawa No. 2 Lake Park',
-	                count: '2016-10-04'
-	            },
-	            {
-	                labelName: 'John Brown',
-	                age: 18,
-	                question: 'New York No. 1 Lake Park',
-	                count: '2016-10-03'
-	            },
-	            {
-	                labelName: 'Jim Green',
-	                age: 24,
-	                question: 'London No. 1 Lake Park',
-	                count: '2016-10-01'
-	            },
-	            {
-	                labelName: 'Joe Black',
-	                age: 30,
-	                question: 'Sydney No. 1 Lake Park',
-	                count: '2016-10-02'
-	            },
-	            {
-	                labelName: 'Jon Snow',
-	                age: 26,
-	                question: 'Ottawa No. 2 Lake Park',
-	                count: '2016-10-04'
-	            }
+	            // {
+	            //     labelName: 'John Brown',
+	            //     age: 18,
+	            //     question: 'New York No. 1 Lake Park',
+	            //     count: '2016-10-03'
+	            // },
+	            // {
+	            //     labelName: 'Jim Green',
+	            //     age: 24,
+	            //     question: 'London No. 1 Lake Park',
+	            //     count: '2016-10-01'
+	            // },
+	            // {
+	            //     labelName: 'Joe Black',
+	            //     age: 30,
+	            //     question: 'Sydney No. 1 Lake Park',
+	            //     count: '2016-10-02'
+	            // },
+	            // {
+	            //     labelName: 'Jon Snow',
+	            //     age: 26,
+	            //     question: 'Ottawa No. 2 Lake Park',
+	            //     count: '2016-10-04'
+	            // },
+	            // {
+	            //     labelName: 'John Brown',
+	            //     age: 18,
+	            //     question: 'New York No. 1 Lake Park',
+	            //     count: '2016-10-03'
+	            // },
+	            // {
+	            //     labelName: 'Jim Green',
+	            //     age: 24,
+	            //     question: 'London No. 1 Lake Park',
+	            //     count: '2016-10-01'
+	            // },
+	            // {
+	            //     labelName: 'Joe Black',
+	            //     age: 30,
+	            //     question: 'Sydney No. 1 Lake Park',
+	            //     count: '2016-10-02'
+	            // },
+	            // {
+	            //     labelName: 'Jon Snow',
+	            //     age: 26,
+	            //     question: 'Ottawa No. 2 Lake Park',
+	            //     count: '2016-10-04'
+	            // }
           	],
 
         }
@@ -215,7 +215,7 @@
       methods: {
       	updateTable () {
         	this.$http({
-            url: 'host/qa/query',
+            url: `http://192.168.1.6:8888/DeltaRobot/statistics/hot.action?currentPage=${this.currentPage}&perPageCount=8`,
             method: 'POST',
             // 请求体重发送的数据
             data: {
@@ -234,7 +234,7 @@
 			    			'question': res.body.questions[i].question,
 			    			'count': res.body.questions[i].count
 			    		})
-			    		this.pageCount = res.body.pageCount;
+			    		this.pageCount = res.body.pageCount * 8;
 			    	}
 			    }, (err) => {
 			      console.log(err);

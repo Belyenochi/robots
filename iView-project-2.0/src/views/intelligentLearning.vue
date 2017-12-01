@@ -90,12 +90,12 @@
 			</div>
 			<div class="settings-body-table">
 				<template>
-				   <Table :columns="columns1" :data="tableData"></Table>
+				   <Table :columns="columns1" :data="tableData" @on-select="updateSelectData" @on-select-all="updateSelectData"></Table>
 				</template>
 			</div>
 			<div class="settings-body-table-page">
 				<template>
-				  <Page :total="pageCount" :page-size="8" :current="this.currentPage" show-elevator @on-change="changePage" @on-select="updateSelectData" @on-select-all="updateSelectData"></Page>
+				  <Page :total="pageCount" :page-size="8" :current="this.currentPage" show-elevator @on-change="changePage"></Page>
 				</template>
 			</div>
 			<template>
@@ -113,7 +113,7 @@
 	        title="确认"
 	        @on-ok="doDelete"
 	        @on-cancel="cancel">
-	        <p>确定关联吗？</p>
+	        <p>取消关联吗？</p>
 		    </Modal>
 			</template>
 			<template>
@@ -123,9 +123,9 @@
 	        @on-ok="seeDetail"
 	        @on-cancel="cancel">
 	        <span>用户输入</span>
-	        <span style="margin-left: 20px" v-model="selectQuestionContent"></span>
+	        <span style="margin-left: 20px;margin-right: 20px" v-html="selectQuestionContent"></span>
 	        <span>系统回答</span>
-	        <span style="margin-left: 20px" v-model="selectAnswer"></span>
+	        <span style="margin-left: 20px;margin-right: 20px" v-html="selectAnswer"></span>
 		    </Modal>
 			</template>
 			<template>
@@ -149,13 +149,13 @@
 	export default {
 			created: function () {
 		    this.$http({
-	            url: 'host/qa/misquery',
+	            url: `http://192.168.1.6:8888/DeltaRobot/qa/misquery.action?labelName=${this.labelName}&currentPage=${this.currentPage}&perPageCount=8`,
 	            method: 'POST',
 	            // 请求体重发送的数据
 	            data: {
-	               'labelName': this.labelName,
-	               'currentPage': this.currentPage,
-	               'perPageCount': 8
+	               // 'labelName': this.labelName,
+	               // 'currentPage': this.currentPage,
+	               // 'perPageCount': 8
 	            },
 	            // 设置请求头
 	            headers: {
@@ -163,21 +163,22 @@
 	            }
 	          })
 		    .then((res) => {
+                console.log(res);
 		    	for (let i = 0; i < res.body.questions.length; i++) {
 		    		this.tableData.push({
 		    			'labelId': res.body.questions[i].label.labelId,
 		    			'labelName': res.body.questions[i].label.labelName,
-		    			'questionContent': res.body.questions[i].standardQuestion.questionContent,
+		    			'questionContent': res.body.questions[i].userQuestion.questionContent,
 		    			'count': res.body.questions[i].count,
 		    			'answer': res.body.questions[i].label.answer
 		    		})
-		    		this.PageCount = res.body.pageCount;
+		    		this.PageCount = res.body.pageCount * 8;
 		    	}
 		    }, (err) => {
 		      console.log(err);
 		    })
 		    this.$http({
-	            url: 'host/qa/labquery',
+	            url: 'http://192.168.1.6:8888/DeltaRobot/qa/labquery.action',
 	            method: 'POST',
 	            // 请求体重发送的数据
 	            data: {
@@ -189,7 +190,8 @@
 	            }
 	          })
 		    .then((res) => {
-		    	for (let i = 0; i < res.body.questions.length; i++) {
+                console.log(res);
+		    	for (let i = 0; i < res.body.labels.length; i++) {
 		    		this.labelList.push({
 		    			'labelId': res.body.labels[i].labelId,
 		    			'labelName': res.body.labels[i].labelName,
@@ -305,62 +307,62 @@
             }
 	        ],
 	        tableData: [
-            {
-                labelName: 'John Brown',
-                questionContent: 18,
-                count: 'New York No. 1 Lake Park',
-                labelId: '',
-                answer: ''
-            },
-            {
-                labelName: 'Jim Green',
-                questionContent: 24,
-                count: 'London No. 1 Lake Park',
-                labelId: '',
-                answer: ''
-            },
-            {
-                labelName: 'Joe Black',
-                questionContent: 30,
-                count: 'Sydney No. 1 Lake Park',
-                labelId: '',
-                answer: ''
-            },
-            {
-                labelName: 'Jon Snow',
-                questionContent: 26,
-                count: 'Ottawa No. 2 Lake Park',
-                labelId: '',
-                answer: ''
-            },
-            {
-                labelName: 'John Brown',
-                questionContent: 18,
-                count: 'New York No. 1 Lake Park',
-                labelId: '',
-                answer: ''
-            },
-            {
-                labelName: 'Jim Green',
-                questionContent: 24,
-                count: 'London No. 1 Lake Park',
-                labelId: '',
-                answer: ''
-            },
-            {
-                labelName: 'Joe Black',
-                questionContent: 30,
-                count: 'Sydney No. 1 Lake Park',
-                labelId: '',
-                answer: ''
-            },
-            {
-                labelName: 'Jon Snow',
-                questionContent: 26,
-                count: 'Ottawa No. 2 Lake Park',
-                labelId: '',
-                answer: ''
-            }
+            // {
+            //     labelName: 'John Brown',
+            //     questionContent: 18,
+            //     count: 'New York No. 1 Lake Park',
+            //     labelId: '',
+            //     answer: ''
+            // },
+            // {
+            //     labelName: 'Jim Green',
+            //     questionContent: 24,
+            //     count: 'London No. 1 Lake Park',
+            //     labelId: '',
+            //     answer: ''
+            // },
+            // {
+            //     labelName: 'Joe Black',
+            //     questionContent: 30,
+            //     count: 'Sydney No. 1 Lake Park',
+            //     labelId: '',
+            //     answer: ''
+            // },
+            // {
+            //     labelName: 'Jon Snow',
+            //     questionContent: 26,
+            //     count: 'Ottawa No. 2 Lake Park',
+            //     labelId: '',
+            //     answer: ''
+            // },
+            // {
+            //     labelName: 'John Brown',
+            //     questionContent: 18,
+            //     count: 'New York No. 1 Lake Park',
+            //     labelId: '',
+            //     answer: ''
+            // },
+            // {
+            //     labelName: 'Jim Green',
+            //     questionContent: 24,
+            //     count: 'London No. 1 Lake Park',
+            //     labelId: '',
+            //     answer: ''
+            // },
+            // {
+            //     labelName: 'Joe Black',
+            //     questionContent: 30,
+            //     count: 'Sydney No. 1 Lake Park',
+            //     labelId: '',
+            //     answer: ''
+            // },
+            // {
+            //     labelName: 'Jon Snow',
+            //     questionContent: 26,
+            //     count: 'Ottawa No. 2 Lake Park',
+            //     labelId: '',
+            //     answer: ''
+            // }
         	],
         	labelList: [],
         	labelName: '',
@@ -368,7 +370,7 @@
         	'questionContent': '',
         	seltectData: [],
         	currentPage: 1,
-        	pageCount: 100,
+        	pageCount: 8,
         	error: '',
         	answer: '',
         	selectQuestionContent: '',
@@ -382,40 +384,38 @@
       },
       methods: {
       	show (params) {
-          this.labelId = index.row.labelId;
-          this.questionContent = index.row.questionContent;
+          this.labelId = params.row.labelId;
+          this.questionContent = params.row.questionContent;
           this.isRelated = true;
         },
         remove (params) {
-          this.questionContent = index.row.questionContent;
+          this.questionContent = params.row.questionContent;
           this.isDelete = true;
         },
         detail (params) {
-        	this.selectQuestionContent = index.row.questionContent;
-        	this.selectAnswer = index.row.answer;
+        	this.selectQuestionContent = params.row.questionContent;
+        	this.selectAnswer = params.row.answer;
         	this.isDetail = true;
         },
         other (params) {
-            console.log(index);
-    		this.selectQuestionContent = index.row.questionContent;
+            console.log(params);
+    		this.selectQuestionContent = params.row.questionContent;
     		this.isOther = true;
         },
         updateSelectData (array) {
         	array.forEach((item) => {
         	  this.seltectData.push({
-        	  	'questionContent': item.questionContent
+        	  	'userQuestion': item.questionContent
         	  })
         	})
         },
         deleteQuesAnse () {
-			this.$http({
-                url: 'host/qa/delete',
-                method: 'POST',
-                // 请求体发送的数据
-                data: {
-                  "questionContent":this.seltectData
+			this.$http.post(
+                'http://192.168.1.6:8888/DeltaRobot/qa/delete.action',
+                {
+                  "questions": this.seltectData
                 }
-            })
+            )
     	    .then((res) => {
     	    	this.error =  res.body.error
     	    	if (this.error) {
@@ -431,12 +431,14 @@
         },
         doRelatedOther () {
 		    this.$http({
-                url: 'host/qa/relevance',
+                url: `http://192.168.1.6:8888/DeltaRobot/qa/relevance.action?labelId=${this.selectLabelId}&questionContent=${this.selectQuestionContent}`,
                 method: 'POST',
-                // 请求体发送的数据
                 data: {
-                	"labelId": this.selectLabelId,
-                    "questionContent":this.selectQuestionContent
+                	// "labelId": this.selectLabelId,
+                    //    "questionContent":this.selectQuestionContent
+                },
+                headers: {
+                    'Content-Type': 'multipart/form-data'
                 }
             })
     	    .then((res) => {
@@ -452,13 +454,13 @@
         },
         updateTable () {
         	this.$http({
-            url: 'host/qa/query',
+            url: `http://192.168.1.6:8888/DeltaRobot/qa/misquery.action?labelName=${this.labelName}&currentPage=${this.currentPage}&perPageCount=8`,
             method: 'POST',
             // 请求体重发送的数据
             data: {
-               'labelName': this.labelName,
-               'currentPage': this.currentPage,
-               'perPageCount': 8
+               // 'labelName': this.labelName,
+               // 'currentPage': this.currentPage,
+               // 'perPageCount': 8
             },
             // 设置请求头
             headers: {
@@ -471,11 +473,11 @@
 			    		this.tableData.push({
 			    			'labelId': res.body.questions[i].label.labelId,
 			    			'labelName': res.body.questions[i].label.labelName,
-			    			'questionContent': res.body.questions[i].standardQuestion.questionContent,
+			    			'questionContent': res.body.questions[i].userQuestion.questionContent,
 			    			'count': res.body.questions[i].count,
 			    			'answer': res.body.questions[i].label.answer
 			    		})
-			    		this.pageCount = res.body.pageCount;
+			    		this.pageCount = res.body.pageCount * 8;
 			    	}
 			    }, (err) => {
 			      console.log(err);
@@ -485,14 +487,14 @@
 					this.currentPage = toPage;
 					this.updateTable();
 				},
-				doRelated () {
+		doRelated () {
             this.$http({
-            url: 'host/qa/relevance',
+            url: `http://192.168.1.6:8888/DeltaRobot/qa/relevance.action?labelId=${this.labelId}&questionContent=${this.questionContent}`,
             method: 'POST',
             // 请求体重发送的数据
             data: {
-               'labelId': this.labelId,
-               'questionContent': this.questionContent,
+               // 'labelId': this.labelId,
+               // 'questionContent': this.questionContent,
             },
             // 设置请求头
             headers: {
@@ -511,18 +513,16 @@
 			    })
         },
         doDelete () {
-        	this.$http({
-            url: 'host/qa/ignore',
-            method: 'POST',
+        	this.$http.post(
+            "http://192.168.1.6:8888/DeltaRobot/qa/ignore.action",
             // 请求体重发送的数据
-            data: {
-               'questionContent': this.questionContent,
+            {
+                type: 4,
+                questions: [{
+                    userQuestion:this.questionContent
+                }]
             },
-            // 设置请求头
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-          })
+          )
 			    .then((res) => {
 			    	this.error = res.body.error;
 			    	if (this.error) {

@@ -99,7 +99,7 @@
 					<div class="list-header">昵称</div>
 					<div class="list-content">
 						<template>
-					    <Input v-model= "robotName" placeholder="This robots Name..." style="width: 800px" autofocus="true"></Input>
+					    <Input v-model= "robotName" placeholder="This robots Name..." style="width: 800px" :autofocus="true"></Input>
 						</template>
 					</div>
 				</div>
@@ -130,7 +130,7 @@
 	export default {
 		created: function () {
 		    this.$http({
-	            url: 'host/robotinfo/query',
+	            url: 'http://192.168.1.6:8888/DeltaRobot/robotinfo/query.action',
 	            method: 'POST',
 	            // 请求体重发送的数据
 	            data: {
@@ -151,14 +151,15 @@
 		  },
 		  data () {
 				return {
-					'robotName': '',
-					'robotDetail': '',
-					'unknowReply': '',
-					'error': ''
+					robotName: '',
+					robotDetail: '',
+					unknowReply: '',
+					error: ''
 				}
 		  },
 		  methods: {
 		  	saveRobotInfo () {
+		  		console.log(this.robotName, this.robotDetail, this.robotDetail);
 		  		if (!this.robotName) {
 		  			alert("昵称不能为空")
 						return;
@@ -170,11 +171,13 @@
 						return;
 		  		}
 		  		this.$http({
-	            url: 'host/robotinfo/query',
+	            url: `http://192.168.1.6:8888/DeltaRobot/robotinfo/edit.action?robotName=${this.robotName}&robotDetail=${this.robotDetail}&unknowReply=${this.unknowReply}`,
 	            method: 'POST',
 	            // 请求体重发送的数据
 	            data: {
-	                
+	        //         robotName: this.robotName,
+									// robotDetail: this.robotDetail,
+									// unknowReply: this.unknowReply
 	            },
 	            // 设置请求头
 	            headers: {

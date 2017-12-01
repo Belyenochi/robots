@@ -74,7 +74,7 @@
 					</div>
 					<div class="list-content">
 						<template>
-					    <Input placeholder="未知问题回复" style="width: 1450px"></Input v-model="unknowReply">
+					    <Input placeholder="未知问题回复" style="width: 1450px" v-model="unknowReply"></Input>
 						</template>
 					</div>
 				</div>
@@ -89,7 +89,7 @@
 	export default {
 		created: function () {
 	    this.$http({
-        url: 'host/robotinfo/requery',
+        url: 'http://192.168.1.6:8888/DeltaRobot/robotinfo/requery.action',
         method: 'POST',
         // 请求体重发送的数据
         data: {
@@ -111,17 +111,17 @@
 	  },
 	  data () {
 			return {
-				'unknowReply': '',
-				'helloReply': '',
-				'isUnknow': '',
-				'isHello': '',
-				'error': ''
+				unknowReply: '',
+				helloReply: '',
+				isUnknow: '',
+				isHello: '',
+				error: ''
 			}
 	  },
 	  methods: {
 	  	setReply () {
 	  		this.$http({
-          url: 'host/robotinfo/reply',
+          url: 'http://192.168.1.6:8888/DeltaRobot/robotinfo/reply.action',
           method: 'POST',
           // 请求体重发送的数据
           data: {
@@ -144,7 +144,7 @@
 	  	},
 	  	setUnknownReply () {
 	  		this.$http({
-          url: 'host/robotinfo/unknow',
+          url: 'http://192.168.1.6:8888/DeltaRobot/robotinfo/unknow.action',
           method: 'POST',
           // 请求体重发送的数据
           data: {
@@ -166,17 +166,17 @@
 		    })
 	  	},
 	  	saveRobotInfo () {
+	  		console.log(this.unknowReply);
 	  		this.$http({
-          url: 'host/robotinfo/reedit',
+          url: `http://192.168.1.6:8888/DeltaRobot/robotinfo/reedit.action?unknowReply=${this.unknowReply}&helloReply=${this.helloReply}`,
           method: 'POST',
-          // 请求体发送的数据
-          data: {
-            'unknowReply': this.unknowReply,
-            'helloReply': this.helloReply
-          },
           // 设置请求头
           headers: {
               'Content-Type': 'multipart/form-data'
+          },
+          // 请求体发送的数据
+          data: {
+            
           }
         })
       	.then((res) => {

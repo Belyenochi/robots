@@ -94,8 +94,8 @@
 			    </Select>
 			  </template>
 			  <template>
-			    <Select v-model="mouth" style="width:150px;margin-top: 30px;margin-left: 68px" v-show="isMouth" @on-change="seletTable">
-			        <Option v-for="item in mouthList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+			    <Select v-model="month" style="width:150px;margin-top: 30px;margin-left: 68px" v-show="ismonth" @on-change="seletTable">
+			        <Option v-for="item in monthList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 			    </Select>
 			  </template>
 			  <template>
@@ -122,7 +122,7 @@
     		missingCount: null,
     		unknowCount: null,
     		isYear: true,
-    		isMouth: false,
+    		ismonth: false,
     		isDay: false,
     		statistic: '',
 				statistics: {
@@ -152,7 +152,7 @@
 					value: 2022,
 					label: 2022
      		}],
-     		mouthList: [{
+     		monthList: [{
      			value: 1,
      			label: '一月'
      		},{
@@ -284,13 +284,13 @@
      			label:31
      		}],
      		year: '',
-     		mouth: '',
+     		month: '',
      		day: '',
      		count: [{
      			value: 'year',
      			label: '年'
      		}, {
-     			value: 'mouth',
+     			value: 'month',
      			label: '月'
      		}, {
      			value: 'day',
@@ -333,13 +333,13 @@
 		      labels: ['talkCount', 'answerCount', 'greetingCount', 'businessCount', 'missingCount', 'unknowCount']
     		}*/
 	  		// 初始化
-	  		this.isMouth =  false;
+	  		this.ismonth =  false;
 	  		this.isDay = false;
 
-	  		if (this.statistic === "mouth") {
-	  			this.isMouth = true;
+	  		if (this.statistic === "month") {
+	  			this.ismonth = true;
 	  		} else if (this.statistic === "day") {
-	  			this.isMouth = true;
+	  			this.ismonth = true;
 	  			this.isDay = true;
 	  		}
 	  	},
@@ -351,43 +351,45 @@
 	  				if (!this.year) {
 	  					return;
 	  				}
-						this.updateStatistics ('host/statistics/yearquery')
+						this.updateStatistics ('http://192.168.1.6:8888/DeltaRobot/statistics/yearquery.action')
 	  				break;
-	  			case "mouth":
+	  			case "month":
 	  				if (!this.year) {
 	  					return;
-	  				} else if (!this.mouth) {
+	  				} else if (!this.month) {
 	  					return;
 	  				}
-	  				this.updateStatistics ('host/statistics/mouthquery')
+	  				this.updateStatistics ('http://192.168.1.6:8888/DeltaRobot/statistics/monthquery.action')
 	  				break;
 	  			case "day":
 		  			if (!this.year) {
 	  					return;
-	  				} else if (!this.mouth) {
+	  				} else if (!this.month) {
 	  					return;
 	  				} else if (!this.day) {
 	  					return;
 	  				}
-	  				this.updateStatistics ('host/statistics/dayquery')
+	  				this.updateStatistics ('http://192.168.1.6:8888/DeltaRobot/statistics/dayquery.action')
 	  				break;
 	  		}
 	  	},
 			updateStatistics (url) {
 				// 初始化表格
-				this.data = null;
-				this.talkCount = null;
-				this.answerCount = null;
-				this.greetingCount = null;
-				this.businessCount = null;
-				this.missingCount = null;
-				this.unknowCount = null;
+				// this.data = null;
+				// this.talkCount = null;
+				// this.answerCount = null;
+				// this.greetingCount = null;
+				// this.businessCount = null;
+				// this.missingCount = null;
+				// this.unknowCount = null;
 				this.$http({
-	            'url': url,
+	            'url': url + `?year=${this.year}&month=${this.month}&day=${this.day}`,
 	            method: 'POST',
 	            // 请求体发送的数据
 	            data: {
-	               year: this.year
+	               //year: this.year,
+	               //month: this.month,
+	               //day: this.day
 	            },
 	            // 设置请求头
 	            headers: {
@@ -395,12 +397,16 @@
 	            }
 	          })
 				    .then((res) => {
-				    	for (prop in res.body) {
-				    		var propList = [];
-				    		if (object.hasOwnProperty(prop)) {
-				    			propList.data.push(res.body.prop)
+				    	let statistics = res.body.statistics;
+				    	console.log(statistics);
+				    	var propList = [];
+				    	for (var prop in statistics) {
+				    		console.log(statistics[prop]);
+				    		if (statistics.hasOwnProperty(prop)) {
+				    			propList.push(statistics[prop])
 				    		}
 				    	}
+				    	console.log(propList);
 				    	this.data = {
 								 datasets: [
 					        {

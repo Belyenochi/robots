@@ -176,13 +176,13 @@
 	export default {
 		created: function () {
 	    this.$http({
-            url: 'host/qa/query',
+            url: `http://192.168.1.6:8888/DeltaRobot/qa/query.action?labelName=${this.labelName}&currentPage=${this.currentPage}&perPageCount=8`,
             method: 'POST',
-            // 请求体重发送的数据
+            // 请求体发送的数据
             data: {
-               'labelName': this.labelName,
-               'currentPage': this.currentPage,
-               'perPageCount': 8
+               // 'labelName': this.labelName,
+               // 'currentPage': this.currentPage,
+               // 'perPageCount': 8
             },
             // 设置请求头
             headers: {
@@ -190,6 +190,7 @@
             }
           })
 	    .then((res) => {
+	    	console.log(res);
 	    	for (let i = 0; i < res.body.questions.length; i++) {
 	    		this.tableData.push({
 	    			'questionId': res.body.questions[i].standardQuestion.questionId,
@@ -197,7 +198,7 @@
 	    			'questionContent': res.body.questions[i].standardQuestion.questionContent,
 	    			'answer': res.body.questions[i].label.answer
 	    		})
-	    		this.PageCount = res.body.pageCount;
+	    		this.pageCount = res.body.pageCount * 8;
 	    	}
 	    }, (err) => {
 	      console.log(err);
@@ -208,7 +209,7 @@
       	allSelect: false,
       	modal1: false,
       	currentPage: 1,
-      	pageCount: 100,
+      	pageCount: 1,
         columns1: [
           {
               type: 'selection',
@@ -229,54 +230,54 @@
           }
         ],
         tableData: [
-            {
-              labelName: 18,
-              questionContent: 'New York No. 1 Lake Park',
-              answer: '2016-10-03',
-              questionId: 12
-            },
-            {
-              labelName: 24,
-              questionContent: 'London No. 1 Lake Park',
-              answer: '2016-10-01',
-              questionId: 12
-            },
-            {
-              labelName: 30,
-              questionContent: 'Sydney No. 1 Lake Park',
-              answer: '2016-10-02',
-              questionId: 12
-            },
-            {
-              labelName: 26,
-              questionContent: 'Ottawa No. 2 Lake Park',
-              answer: '2016-10-04',
-              questionId: 12
-            },
-            {
-              labelName: 18,
-              questionContent: 'New York No. 1 Lake Park',
-              answer: '2016-10-03',
-              questionId: 12
-            },
-            {
-              labelName: 24,
-              questionContent: 'London No. 1 Lake Park',
-              answer: '2016-10-01',
-              questionId: 12
-            },
-            {
-              labelName: 30,
-              questionContent: 'Sydney No. 1 Lake Park',
-              answer: '2016-10-02',
-              questionId: 12
-            },
-            {
-              labelName: 26,
-              questionContent: 'Ottawa No. 2 Lake Park',
-              answer: '2016-10-04',
-              questionId: 12
-            }
+            // {
+            //   labelName: 18,
+            //   questionContent: 'New York No. 1 Lake Park',
+            //   answer: '2016-10-03',
+            //   questionId: 12
+            // },
+            // {
+            //   labelName: 24,
+            //   questionContent: 'London No. 1 Lake Park',
+            //   answer: '2016-10-01',
+            //   questionId: 12
+            // },
+            // {
+            //   labelName: 30,
+            //   questionContent: 'Sydney No. 1 Lake Park',
+            //   answer: '2016-10-02',
+            //   questionId: 12
+            // },
+            // {
+            //   labelName: 26,
+            //   questionContent: 'Ottawa No. 2 Lake Park',
+            //   answer: '2016-10-04',
+            //   questionId: 12
+            // },
+            // {
+            //   labelName: 18,
+            //   questionContent: 'New York No. 1 Lake Park',
+            //   answer: '2016-10-03',
+            //   questionId: 12
+            // },
+            // {
+            //   labelName: 24,
+            //   questionContent: 'London No. 1 Lake Park',
+            //   answer: '2016-10-01',
+            //   questionId: 12
+            // },
+            // {
+            //   labelName: 30,
+            //   questionContent: 'Sydney No. 1 Lake Park',
+            //   answer: '2016-10-02',
+            //   questionId: 12
+            // },
+            // {
+            //   labelName: 26,
+            //   questionContent: 'Ottawa No. 2 Lake Park',
+            //   answer: '2016-10-04',
+            //   questionId: 12
+            // }
         	],
         	seltectData: [],
         	standardQuestion: '',
@@ -288,7 +289,45 @@
       },
       methods: {
       	ok () {
-            this.$Message.info('Clicked ok');
+            this.$http.post('http://192.168.1.6:8888/DeltaRobot/qa/add.action'
+	            ,
+	            // 请求体发送的数据
+	            {
+	              standard: {
+									standardQuestion: this.standardQuestion,
+									standardWord: [{
+										wordText: '1',
+										wordSex: '1'
+									}]
+	              },
+	              similarQuestions: [{
+									similar: {
+										similarQuestion: this.similarQuestion,
+										similarWord: [
+											{
+												wordText: '',
+												wordSex: ''
+											}
+										]
+									}
+	              }],
+	              answer: this.answer
+	            }
+          )
+			    .then((res) => {
+			    	alert('success');
+			    	this.error =  res.body.error
+			    	if (this.error) {
+			    		alert(this.error)
+			    		return;
+			    	} else {
+			    		alert("添加成功!")
+			    	}
+			    	this.tableData = [];
+			    	this.updateTable();
+			    }, (err) => {
+			      console.log(err)
+			    })
         },
         cancel () {
             this.$Message.info('Clicked cancel');
@@ -305,14 +344,11 @@
         	})
         },
         deleteQuesAnse () {
-			    this.$http({
-            url: 'host/robotinfo/greeting',
-            method: 'POST',
-            // 请求体发送的数据
-            data: {
+			    this.$http.post('http://192.168.1.6:8888/DeltaRobot/qa/delete.action',
+            {
               "questions":this.seltectData
             }
-          })
+          )
 			    .then((res) => {
 			    	this.error =  res.body.error
 			    	if (this.error) {
@@ -329,13 +365,13 @@
         },
         updateTable () {
         	this.$http({
-            url: 'host/qa/query',
+            url: `http://192.168.1.6:8888/DeltaRobot/qa/query.action?labelName=${this.labelName}&currentPage=${this.currentPage}&perPageCount=8`,
             method: 'POST',
             // 请求体重发送的数据
             data: {
-               'labelName': this.labelName,
-               'currentPage': this.currentPage,
-               'perPageCount': 8
+               // 'labelName': this.labelName,
+               // 'currentPage': this.currentPage,
+               // 'perPageCount': 8
             },
             // 设置请求头
             headers: {
@@ -343,15 +379,15 @@
             }
           })
 			    .then((res) => {
+			    	this.tableData = [];
 			    	for (let i = 0; i < res.body.questions.length; i++) {
-			    		this.tableData = [];
 			    		this.tableData.push({
 			    			'questionId': res.body.questions[i].standardQuestion.questionId,
 			    			'labelName': res.body.questions[i].label.labelName,
 			    			'questionContent': res.body.questions[i].standardQuestion.questionContent,
 			    			'answer': res.body.questions[i].label.answer
 			    		})
-			    		this.PageCount = res.body.pageCount;
+			    		this.pageCount = res.body.pageCount * 8;
 			    	}
 			    }, (err) => {
 			      console.log(err);
