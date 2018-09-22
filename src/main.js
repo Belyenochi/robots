@@ -13,8 +13,9 @@ Vue.use(VueResource);
 
 // 路由配置
 const RouterConfig = {
-    mode: 'history',
-    routes: Routers
+    mode: 'hash',
+    routes: Routers,
+    base: './'
 };
 const router = new VueRouter(RouterConfig);
 
